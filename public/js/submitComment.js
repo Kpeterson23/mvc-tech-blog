@@ -1,16 +1,32 @@
-function formatDate(date) {
-  return `${new Date(date).getMonth() + 1}/${new Date(
-    date
-  ).getDate()}/${new Date(date).getFullYear()}`;
-}
-const isEqualHelperHandlerbar = function (a, b, opts) {
-  if (a == b) {
-    return opts.fn(this);
-  } else {
-    return opts.inverse(this);
-  }
-};
+function newComment(content, blogpost_id) {
+  const options = {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: `{"content":"${content}","blogpost_id":${blogpost_id}}`,
+  };
 
-module.exports = {
-  formatDate,
-};
+  fetch("http://localhost:3001/api/comment/", options)
+    .then((response) => {
+      if (response.ok) {
+        console.log("successfully posted comment");
+      } else {
+        console.log("You need to be logged in");
+      }
+    })
+    .catch((err) => console.error(err));
+}
+
+function init() {
+  const commentButton = document.querySelectorAll(".submitComment");
+  commentButton.forEach((element) => {
+    element.addEventListener("click", function () {
+      const thisID = element.id;
+      const commentContent = document.querySelector(`#content${thisID}`);
+      if (commentContent.value) {
+        newComment(commentContent.value, thisID);
+      }
+    });
+  });
+}
+
+init();
